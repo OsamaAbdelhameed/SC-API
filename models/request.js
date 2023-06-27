@@ -4,18 +4,10 @@ const requestSchema = new mongoose.Schema({
     desc: { type: String, required: true },
     price: { type: String, required: true },
     status: { type: String, required: true },
-    arrivalDate: { type: String, required: true },
-    owner: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    },
+    arrivalDate: { type: String, required: true }
     post: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Post'
-    },
-    postOwner: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
     }
 })
 

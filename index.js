@@ -7,8 +7,6 @@ require('dotenv').config();
 
 const { Logging } = require('./library/logging');
 
-const authRoutes = require("./routes/user.js");
-const adminRoutes = require("./routes/admin.js");
 const postRoutes = require("./routes/post.js");
 const requestRoutes = require("./routes/request.js");
 
@@ -63,8 +61,6 @@ const StartServer = () => {
     });
 
     /** Routes */
-    router.use('/user', authRoutes);
-    router.use('/admin', adminRoutes);
     router.use('/post', postRoutes);
     router.use('/request', requestRoutes);
 

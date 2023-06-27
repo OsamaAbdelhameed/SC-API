@@ -2,14 +2,8 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 
 const commentSchema = new mongoose.Schema({
-    img: { type: String, required: true },
     title: { type: String, required: true },
-    content: { type: String, required: true },
-    owner: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    }
+    content: { type: String, required: true }
 })
 
 const Comment = mongoose.model('CommentEmbed', commentSchema)
@@ -24,12 +18,7 @@ const postSchema = new mongoose.Schema({
     area: { type: Number, required: true },
     numOfReqs: { type: Number, required: true },
     comments: { type: [commentSchema], required: true },
-    state: { type: String, required: true },
-    owner: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    }
+    state: { type: String, required: true }
 })
 
 const Post = mongoose.model('Post', postSchema);

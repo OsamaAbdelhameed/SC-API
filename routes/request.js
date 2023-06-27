@@ -1,14 +1,13 @@
 const express = require('express');
 const { createRequest, updateRequest, changeRequestState, getAllRequests, deleteRequest } = require('../controllers/request');
-const { authenticateToken } = require('../middleware/authrizate');
 const { validateSchema, Schemas } = require('../middleware/validate');
 
 const router = express.Router();
 
-router.get('/', authenticateToken, getAllRequests)
-router.post('/', authenticateToken, validateSchema(Schemas.request), createRequest)
-router.put('/:id', authenticateToken, updateRequest)
-router.patch('/:id', authenticateToken, changeRequestState)
-router.delete('/:id', authenticateToken, deleteRequest)
+router.get('/', getAllRequests)
+router.post('/', validateSchema(Schemas.request), createRequest)
+router.put('/:id', updateRequest)
+router.patch('/:id', changeRequestState)
+router.delete('/:id', deleteRequest)
 
 module.exports = router;

@@ -1,9 +1,6 @@
 const { Request } = require("../models/request");
 
 const createRequest = async(req, res) => {
-    if (req.user.role !== 's')
-        return res.status(400).send({ message: 'Students only are allowed to create requests' });
-
     const request = new Request({...req.body });
 
     return await request
@@ -16,8 +13,7 @@ const updateRequest = async(req, res) => {
     const id = req.params.id;
     try {
         const request = await Request.findById(id);
-        if (req.user.id != request.owner)
-            return res.status(500).send({ message: "You aren't the owner of this request" })
+
         return request
             .set(req.body)
             .save()
@@ -29,17 +25,9 @@ const updateRequest = async(req, res) => {
 }
 
 const getAllRequests = async(req, res) => {
-    console.log('getAllRequests')
     return await Request.find()
-        .populate('owner', 'name img')
         .populate('post', '')
-        .populate('postOwner', 'name img')
         .then((requests) => {
-            console.log(requests)
-            if (req.user.role === 's')
-                requests = [...requests.filter(request => request.owner._id == req.user.id)]
-            else if (req.user.role !== 'a')
-                requests = [...requests.filter(request => request.postOwner._id == req.user.id)]
             console.log(requests)
             res.status(200).json({ requests })
         })
@@ -50,14 +38,9 @@ const getAllRequests = async(req, res) => {
 }
 
 const changeRequestState = async(req, res) => {
-    if (req.user.role === 'a')
-        return res.status(400).send({ message: "Students and Advertisers only are allowed to update users' requests" });
-
     try {
         const { id } = req.params;
         const request = await Request.findById(id);
-        if (req.user.id != request.postOwner && req.user.id != request.owner)
-            return res.status(400).send({ message: "You need to be the request or the post owner" });
 
         return request
             .set(req.body)
@@ -72,14 +55,8 @@ const changeRequestState = async(req, res) => {
 const deleteRequest = async(req, res) => {
     try {
         const { id } = req.params;
-        const request = await Request.findById(id);
 
-        if (req.user.role !== 'a' && req.user.id !== request.owner)
-            return res.status(400).send({ message: "You need to be an admin or request's owner" });
-        if (req.user.role === 's' && req.user.id !== request.owner)
-            return res.status(400).send({ message: "Users aren't allowed to delete other users' requests" });
-
-        return request.deleteOne({ _id: id })
+        return await Request.deleteOne({ _id: id })
             .then((r) => res.status(200).json({ r }))
             .catch((err) => res.status(500).json({ err }));
     } catch (err) {
