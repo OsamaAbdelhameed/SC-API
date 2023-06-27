@@ -5,7 +5,9 @@ const login = async(req, res) => {
     try {
         const { email, password } = req.body;
 
-        const user = await User.findOne({ email })
+        const user = await User.find()
+        console.log(user)
+
         if (!user)
             return res.status(400).send({ message: "Email is not Existed!" });
         if (user.state === 'new')
