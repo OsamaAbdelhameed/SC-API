@@ -34,7 +34,7 @@ const changePostState = async(req, res) => {
     try {
         const { id } = req.params;
         const post = await Post.findById(id);
-
+        console.log("hi")
         return post
             .set(req.body)
             .save()
