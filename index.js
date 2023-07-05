@@ -1,16 +1,10 @@
-const express = require('express');
-const cors = require('cors');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
+const router = require('./serverConfig');
 
 require('dotenv').config();
 
 const { Logging } = require('./library/logging');
 
-const postRoutes = require("./routes/post.js");
-const requestRoutes = require("./routes/request.js");
-
-const router = express();
 const PORT = process.env.PORT || 5000;
 
 const MONGO_UNAME = process.env.MONGO_UNAME || '';
@@ -30,50 +24,5 @@ mongoose
 
 /** Only start the server if its connected to mongo **/
 const StartServer = () => {
-    router.use((req, res, next) => {
-        /** Log the Request */
-        Logging.info(`Incoming -> Method: [${req.method}] - Url: [${req.url}] - IP: [${req.socket.remoteAddress}]`);
-
-        res.on('finish', () => {
-            /** Log the Response */
-            Logging.info(`Incoming -> Method: [${req.method}] - Url: [${req.url}] - IP: [${req.socket.remoteAddress}] - Status: [${res.statusCode}]`);
-        });
-
-        next();
-    });
-
-    router.use(cors());
-    router.use(express.json());
-    router.use(express.urlencoded({ extended: true }));
-    router.use(bodyParser.urlencoded({ extended: true }));
-
-    /** Rules of our API */
-    router.use((req, res, next) => {
-        res.header('Access-Control-Allow-Origin', '*');
-        res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-
-        if (req.method == 'OPTIONS') {
-            res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
-            return res.status(200).json({});
-        }
-
-        next();
-    });
-
-    /** Routes */
-    router.use('/post', postRoutes);
-    router.use('/request', requestRoutes);
-
-    /** Healthcheck */
-    router.get('/ping', (req, res, next) => res.status(200).json({ message: 'pong' }));
-
-    /** Error Handling */
-    router.use((req, res, next) => {
-        const error = new Error('not found');
-        Logging.err(error);
-
-        return res.status(404).json({ message: error.message });
-    });
-
     router.listen(PORT, () => Logging.info(`Server is running on port ${PORT}`));
 };
